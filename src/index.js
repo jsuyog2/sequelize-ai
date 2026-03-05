@@ -52,8 +52,6 @@ class SequelizeAI {
     const systemPrompt = getSystemPrompt(schema);
     // 1. Generate code — user input passed separately as the user message
     const raw = await this.engine.generateCode(systemPrompt, userInput);
-    console.log(raw);
-
     // 2. Validate before executing
     const generatedCode = validateGeneratedCode(raw);
     // 3. Execute in sandbox
