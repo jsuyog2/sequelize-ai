@@ -1,5 +1,5 @@
 {
-  "name": "sequelize-ai",
+  "name": "@jsuyog2/sequelize-ai",
   "version": "1.0.0",
   "description": "AI-powered natural language to Sequelize query generator",
   "keywords": [
