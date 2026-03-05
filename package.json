@@ -1,0 +1,29 @@
+{
+  "name": "sequelize-ai",
+  "version": "1.0.0",
+  "description": "AI-powered natural language to Sequelize query generator",
+  "keywords": [
+    "sequelize",
+    "ai",
+    "nlp",
+    "orm",
+    "openai",
+    "text-to-sql",
+    "nodejs"
+  ],
+  "homepage": "https://github.com/jsuyog2/sequelize-ai#readme",
+  "bugs": {
+    "url": "https://github.com/jsuyog2/sequelize-ai/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsuyog2/sequelize-ai.git"
+  },
+  "license": "MIT",
+  "author": "Suyog Jadhav",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  }
+}
