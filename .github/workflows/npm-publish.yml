@@ -101,12 +101,7 @@ jobs:
         with:
           name: dist
           path: dist/
-
-      - name: Rename package for GitHub registry
-        uses: jaywcjlove/github-action-package@v2.0.0
-        with:
-          rename: "@jsuyog2/sequelize-ai"
-
+          
       - name: Publish to GitHub Packages
         run: npm publish
         env:
