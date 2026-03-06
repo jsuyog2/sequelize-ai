@@ -1,6 +1,6 @@
-# SequelizeAI
+# sequelize-ai
 
-Query your database in plain English. SequelizeAI translates natural language into Sequelize queries, executes them in a secure sandbox, and returns structured JSON — no SQL required.
+Query your database in plain English. sequelize-ai translates natural language into Sequelize queries, executes them in a secure sandbox, and returns structured JSON — no SQL required.
 
 ```js
 const ai = new SequelizeAI(sequelize, { provider: "openai", apiKey: "..." });
@@ -12,7 +12,7 @@ await ai.ask(
 await ai.ask("how many orders have status pending");
 ```
 
-[![npm version](https://img.shields.io/npm/v/@jsuyog2/sequelize-ai.svg)](https://www.npmjs.com/package/@jsuyog2/sequelize-ai)
+[![npm version](https://img.shields.io/npm/v/sequelize-ai.svg)](https://www.npmjs.com/package/sequelize-ai)
 [![license](https://img.shields.io/npm/l/sequelize-ai.svg)](LICENSE)
 [![issues](https://img.shields.io/github/issues/jsuyog2/sequelize-ai)](https://github.com/jsuyog2/sequelize-ai/issues)
 
@@ -24,6 +24,7 @@ await ai.ask("how many orders have status pending");
 - **Multi-provider** — OpenAI, Gemini, Claude, Groq, DeepSeek, and more
 - **Secure sandbox** — queries run inside an isolated V8 context via `isolated-vm`
 - **Read-only by design** — only `SELECT`-equivalent Sequelize methods are allowed
+- **AI column hints** — add `aiDescription` to your model columns for better query understanding
 - **Computed columns** — derive values like `stock * price` without writing SQL
 - **Multi-query** — ask compound questions that require more than one query
 - **Structured JSON output** — consistent `{ model, method, data }` envelope
@@ -33,16 +34,22 @@ await ai.ask("how many orders have status pending");
 ## Installation
 
 ```bash
-npm install sequelize-ai
+npm install @jsuyog2/sequelize-ai
+```
+
+Install peer dependencies:
+
+```bash
+npm install sequelize pg pg-hstore
 ```
 
 Install the SDK for your chosen provider:
 
 ```bash
-npm install openai           # OpenAI
-npm install @google/generative-ai  # Gemini
-npm install @anthropic-ai/sdk      # Claude
-npm install groq-sdk               # Groq
+npm install openai                   # OpenAI
+npm install @google/generative-ai    # Gemini
+npm install @anthropic-ai/sdk        # Claude
+npm install groq-sdk                 # Groq
 ```
 
 ---
@@ -58,9 +65,9 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 
 const ai = new SequelizeAI(sequelize, {
-  provider: "openai", // openai | gemini | claude | groq
+  provider: "openai", // openai | gemini | claude | groq | deepseek
   apiKey: process.env.OPENAI_API_KEY,
-  // model: "gpt-4o-mini"     // optional — defaults to best model for each provider
+  // model: "gpt-4o-mini"               // optional — defaults to best model per provider
 });
 
 const result = await ai.ask("get all products where stock is greater than 10");
@@ -80,19 +87,56 @@ console.log(result);
 | DeepSeek         | `"deepseek"` | `deepseek-chat`             | `npm install openai`                |
 
 ```js
-// Groq (fast, free tier)
+// Groq — fast, generous free tier
 const ai = new SequelizeAI(sequelize, {
   provider: "groq",
   apiKey: process.env.GROQ_API_KEY,
 });
 
-// Claude
+// Claude — override default model
 const ai = new SequelizeAI(sequelize, {
   provider: "claude",
   apiKey: process.env.ANTHROPIC_API_KEY,
-  model: "claude-sonnet-4-6", // override default
+  model: "claude-sonnet-4-6",
 });
 ```
+
+---
+
+## AI Column Hints
+
+Add `aiDescription` to your Sequelize model columns to give the AI better context about what each field means. This leads to more accurate query generation, especially for computed columns and ambiguous field names.
+
+```js
+const Product = sequelize.define("Product", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    comment: "Product display name",
+    aiDescription: "The name of the product shown to customers",
+  },
+  price: {
+    type: DataTypes.DECIMAL(10, 2),
+    comment: "Price in USD",
+    aiDescription:
+      "Selling price in USD, use for price-related queries and earnings calculations",
+  },
+  category: {
+    type: DataTypes.STRING,
+    comment: "Product category",
+    aiDescription:
+      "Product category e.g. Electronics, Kitchen, Furniture — use for filtering by category",
+  },
+  stock: {
+    type: DataTypes.INTEGER,
+    comment: "Inventory count",
+    aiDescription:
+      "Number of units available in inventory, use for stock checks and availability queries",
+  },
+});
+```
+
+> `aiDescription` is only used by sequelize-ai as context for the LLM — it is never written to the database. Use `comment` for standard database-level documentation.
 
 ---
 
@@ -178,7 +222,7 @@ Multi-query returns an array:
 
 ## Security
 
-SequelizeAI is built with security as a core constraint:
+sequelize-ai is built with security as a core constraint:
 
 - **Isolated sandbox** — all LLM-generated code runs inside `isolated-vm`, a separate V8 context with no access to your Node.js environment
 - **Method whitelist** — only read-only Sequelize methods are permitted: `findAll`, `findOne`, `findByPk`, `findAndCountAll`, `count`, `sum`, `min`, `max`, `average`
@@ -208,7 +252,7 @@ Any attempt to call `destroy`, `update`, `create`, `drop`, or other write method
 
 ## Where Operators
 
-Use plain string operators in natural language queries — SequelizeAI maps them to Sequelize `Op` symbols automatically:
+Use plain string operators in natural language queries — sequelize-ai maps them to Sequelize `Op` symbols automatically:
 
 | Operator    | Meaning               |
 | ----------- | --------------------- |
@@ -222,20 +266,24 @@ Use plain string operators in natural language queries — SequelizeAI maps them
 | `"in"`      | in list               |
 | `"between"` | between two values    |
 
+---
+
 ## Testing
 
 ```bash
-npm test            # run test suite once
-npm run test:watch  # watch mode
+npm test              # run unit test suite
+npm run test:watch    # watch mode
+npm run test:coverage # with coverage report
+node run.js           # integration test against real database
 ```
 
 ---
 
 ## Requirements
 
-- Node.js 18+
-- Sequelize 6+
-- A supported database (PostgreSQL, MySQL, SQLite, etc.)
+- Node.js `>= 22.0.0`
+- Sequelize `^6.37.7`
+- PostgreSQL (`pg ^8.20.0`, `pg-hstore ^2.3.4`)
 - API key for at least one supported LLM provider
 
 ---
