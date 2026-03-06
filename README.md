@@ -12,8 +12,8 @@ await ai.ask(
 await ai.ask("how many orders have status pending");
 ```
 
-[![npm version](https://img.shields.io/npm/v/sequelize-ai.svg)](https://www.npmjs.com/package/sequelize-ai)
-[![license](https://img.shields.io/npm/l/sequelize-ai.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/@jsuyog2/sequelize-ai.svg)](https://www.npmjs.com/package/sequelize-ai)
+[![license](https://img.shields.io/npm/l/@jsuyog2/sequelize-ai.svg)](LICENSE)
 [![issues](https://img.shields.io/github/issues/jsuyog2/sequelize-ai)](https://github.com/jsuyog2/sequelize-ai/issues)
 
 ---

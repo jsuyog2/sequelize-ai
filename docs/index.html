@@ -1,0 +1,1290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sequelize-ai — Natural Language Database Queries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0a0e0f;
+        --bg2: #0f1517;
+        --bg3: #141c1e;
+        --surface: #1a2426;
+        --border: #1f2d30;
+        --border2: #243336;
+        --text: #e8f0f1;
+        --muted: #6b8a8e;
+        --dim: #3d5558;
+        --accent: #00d4a8;
+        --accent2: #00a882;
+        --accent3: #7effd8;
+        --warn: #ff6b6b;
+        --code-bg: #0d1618;
+        --radius: 6px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.7;
+        overflow-x: hidden;
+      }
+
+      /* ── Scrollbar ── */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border2);
+        border-radius: 3px;
+      }
+
+      /* ── Noise overlay ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.4;
+      }
+
+      /* ── Layout ── */
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ── Nav ── */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(10, 14, 15, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 32px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .nav-logo {
+        font-family: "DM Mono", monospace;
+        font-size: 15px;
+        color: var(--accent);
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+      .nav-logo span {
+        color: var(--muted);
+      }
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+      }
+      .nav-badge {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        color: var(--accent);
+        padding: 3px 10px;
+        border-radius: 20px;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        padding: 100px 0 80px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -200px;
+        right: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 212, 168, 0.06) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 1px;
+        background: var(--accent);
+      }
+      h1 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(42px, 7vw, 76px);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -3px;
+        color: var(--text);
+        margin-bottom: 24px;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .hero-sub {
+        font-size: 17px;
+        color: var(--muted);
+        max-width: 520px;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        font-weight: 300;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 56px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #0a0e0f;
+      }
+      .btn-primary:hover {
+        background: var(--accent3);
+        transform: translateY(-1px);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border2);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* ── Badges ── */
+      .badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .badges img {
+        height: 20px;
+        opacity: 0.8;
+        filter: grayscale(20%);
+      }
+
+      /* ── Hero code ── */
+      .hero-code {
+        margin-top: 56px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .code-bar {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        gap: 8px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f57;
+      }
+      .dot-y {
+        background: #febc2e;
+      }
+      .dot-g {
+        background: #28c840;
+      }
+      .code-label {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        margin-left: auto;
+      }
+      pre {
+        padding: 24px 28px;
+        overflow-x: auto;
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        line-height: 1.8;
+      }
+      .kw {
+        color: #89b4fa;
+      }
+      .str {
+        color: #a6e3a1;
+      }
+      .fn {
+        color: #cba6f7;
+      }
+      .cm {
+        color: var(--dim);
+        font-style: italic;
+      }
+      .acc {
+        color: var(--accent);
+      }
+      .num {
+        color: #fab387;
+      }
+
+      /* ── Features grid ── */
+      section {
+        padding: 80px 0;
+      }
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      h2 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: -1.5px;
+        margin-bottom: 48px;
+        color: var(--text);
+      }
+      h2 span {
+        color: var(--accent);
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .feature {
+        background: var(--bg);
+        padding: 28px 32px;
+        transition: background 0.2s;
+      }
+      .feature:hover {
+        background: var(--bg2);
+      }
+      .feature-icon {
+        font-size: 22px;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .feature h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+      .feature p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* ── Install ── */
+      .install-section {
+        padding: 80px 0;
+      }
+      .install-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      @media (max-width: 700px) {
+        .install-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .install-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .install-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .install-card-header .tag {
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        color: var(--accent);
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        margin-left: auto;
+      }
+      .install-card pre {
+        padding: 20px;
+        font-size: 13px;
+      }
+      .prompt {
+        color: var(--dim);
+      }
+
+      /* ── Providers ── */
+      .providers-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        font-size: 13px;
+      }
+      .providers-table th {
+        background: var(--surface);
+        padding: 12px 20px;
+        text-align: left;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.5px;
+        font-weight: 400;
+        border-bottom: 1px solid var(--border);
+      }
+      .providers-table td {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      .providers-table tr:last-child td {
+        border-bottom: none;
+      }
+      .providers-table tr:hover td {
+        background: var(--bg2);
+      }
+      .pill {
+        display: inline-block;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        color: var(--accent);
+        padding: 3px 10px;
+        border-radius: 4px;
+      }
+      .model-pill {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* ── AI Hints ── */
+      .hints-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 800px) {
+        .hints-split {
+          grid-template-columns: 1fr;
+        }
+      }
+      .hint-box {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .hint-box-header {
+        padding: 12px 20px;
+        border-bottom: 1px solid var(--border);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .badge-before {
+        color: var(--warn);
+      }
+      .badge-after {
+        color: var(--accent);
+      }
+      .hint-box pre {
+        padding: 20px;
+        font-size: 12px;
+      }
+
+      /* ── Methods ── */
+      .methods-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .method-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .method-card:hover {
+        border-color: var(--accent2);
+        transform: translateY(-2px);
+      }
+      .method-name {
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        color: var(--accent);
+        margin-bottom: 6px;
+      }
+      .method-desc {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* ── Ops table ── */
+      .ops-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 8px;
+      }
+      .op-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+      }
+      .op-key {
+        font-family: "DM Mono", monospace;
+        color: var(--accent);
+      }
+      .op-val {
+        color: var(--muted);
+      }
+
+      /* ── Security ── */
+      .security-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+      }
+      .sec-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 22px;
+        border-left: 3px solid var(--accent);
+      }
+      .sec-card h4 {
+        font-family: "Syne", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        letter-spacing: -0.2px;
+      }
+      .sec-card p {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .blocked {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 107, 107, 0.08);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        color: var(--warn);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 4px;
+        margin: 4px 3px 0 0;
+        display: inline-block;
+      }
+
+      /* ── Query examples ── */
+      .queries-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .query-group {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .query-group-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        font-family: "Syne", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.3px;
+      }
+      .query-list {
+        padding: 12px 0;
+      }
+      .query-item {
+        padding: 6px 16px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text);
+        opacity: 0.7;
+        transition:
+          opacity 0.2s,
+          background 0.2s;
+        cursor: default;
+      }
+      .query-item:hover {
+        opacity: 1;
+        background: var(--surface);
+      }
+
+      /* ── Divider ── */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
+
+      /* ── Footer ── */
+      footer {
+        padding: 48px 0;
+        border-top: 1px solid var(--border);
+      }
+      .footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .footer-left {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .footer-left a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .footer-links {
+        display: flex;
+        gap: 20px;
+      }
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--text);
+      }
+
+      /* ── Animations ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .hero > * {
+        animation: fadeUp 0.6s ease both;
+      }
+      .hero > *:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .hero > *:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .hero > *:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .hero > *:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .hero > *:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .hero > *:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      /* ── Inline code ── */
+      code {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: var(--accent);
+      }
+
+      @media (max-width: 600px) {
+        .nav-links {
+          display: none;
+        }
+        .wrap {
+          padding: 0 20px;
+        }
+        .nav-inner {
+          padding: 14px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Nav ── -->
+    <nav>
+      <div class="nav-inner">
+        <a class="nav-logo" href="#">sequelize<span>-ai</span></a>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#install">Install</a>
+          <a href="#providers">Providers</a>
+          <a href="#hints">AI Hints</a>
+          <a href="#security">Security</a>
+          <a href="#queries">Queries</a>
+          <span class="nav-badge">v1.1.0</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <div class="wrap">
+      <section class="hero">
+        <div class="hero-eyebrow">Natural Language → Sequelize</div>
+        <h1>Query your DB<br />in plain <em>English</em></h1>
+        <p class="hero-sub">
+          sequelize-ai translates natural language into Sequelize queries,
+          executes them in a secure isolated sandbox, and returns structured
+          JSON — no SQL required.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn btn-primary"
+            href="https://www.npmjs.com/package/@jsuyog2/sequelize-ai"
+            target="_blank"
+          >
+            ↓ Install on npm
+          </a>
+          <a
+            class="btn btn-ghost"
+            href="https://github.com/jsuyog2/sequelize-ai"
+            target="_blank"
+          >
+            ★ GitHub
+          </a>
+        </div>
+        <div class="badges">
+          <img
+            src="https://img.shields.io/npm/v/@jsuyog2/sequelize-ai?style=flat-square&color=00d4a8&labelColor=141c1e"
+            alt="version"
+          />
+          <img
+            src="https://img.shields.io/npm/l/@jsuyog2/sequelize-ai?style=flat-square&color=6b8a8e&labelColor=141c1e"
+            alt="license"
+          />
+          <img
+            src="https://img.shields.io/github/issues/jsuyog2/sequelize-ai?style=flat-square&color=6b8a8e&labelColor=141c1e"
+            alt="issues"
+          />
+        </div>
+
+        <div class="hero-code">
+          <div class="code-bar">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+            <span class="code-label">quickstart.js</span>
+          </div>
+          <pre><span class="kw">const</span> <span class="acc">SequelizeAI</span> = <span class="fn">require</span>(<span class="str">"sequelize-ai"</span>);
+
+<span class="kw">const</span> ai = <span class="kw">new</span> <span class="acc">SequelizeAI</span>(sequelize, {
+  provider: <span class="str">"groq"</span>,
+  apiKey: process.env.<span class="acc">GROQ_API_KEY</span>,
+});
+
+<span class="cm">// Plain English → Sequelize → JSON</span>
+<span class="kw">await</span> ai.<span class="fn">ask</span>(<span class="str">"get all products where stock is greater than 10"</span>);
+<span class="kw">await</span> ai.<span class="fn">ask</span>(<span class="str">"show top 5 most expensive Electronics products"</span>);
+<span class="kw">await</span> ai.<span class="fn">ask</span>(<span class="str">"total stock left and earnings if all products sold"</span>);
+<span class="kw">await</span> ai.<span class="fn">ask</span>(<span class="str">"what is the cheapest and most expensive product price"</span>);</pre>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Features ── -->
+    <div class="wrap" id="features">
+      <section>
+        <div class="section-label">Why sequelize-ai</div>
+        <h2>Everything you need,<br /><span>nothing you don't</span></h2>
+        <div class="features-grid">
+          <div class="feature">
+            <span class="feature-icon">🗣️</span>
+            <h3>Natural Language</h3>
+            <p>
+              Ask questions in plain English. No need to know Sequelize syntax
+              or SQL — just describe what you want.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔒</span>
+            <h3>Secure Sandbox</h3>
+            <p>
+              All generated code runs inside an isolated V8 context via
+              <code>isolated-vm</code> — completely separate from your Node.js
+              process.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🚫</span>
+            <h3>Read-Only by Design</h3>
+            <p>
+              Only SELECT-equivalent methods are permitted. Write operations
+              like <code>destroy</code>, <code>update</code>, and
+              <code>create</code> are blocked.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">💡</span>
+            <h3>AI Column Hints</h3>
+            <p>
+              Add <code>aiDescription</code> to your model columns for richer
+              LLM context and more accurate query generation.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🧮</span>
+            <h3>Computed Columns</h3>
+            <p>
+              Derive values like <code>stock * price</code> or discounted prices
+              on the fly — no raw SQL expressions needed.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">⚡</span>
+            <h3>Multi-Provider</h3>
+            <p>
+              Works with OpenAI, Gemini, Claude, Groq, and DeepSeek. Switch
+              providers with a single config change.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔀</span>
+            <h3>Multi-Query</h3>
+            <p>
+              Ask compound questions that require multiple database calls.
+              Results returned as a structured array.
+            </p>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">📦</span>
+            <h3>Structured Output</h3>
+            <p>
+              Every response returns a consistent
+              <code>{ model, method, data }</code> envelope — easy to consume in
+              any app.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Install ── -->
+    <div class="wrap" id="install">
+      <section class="install-section">
+        <div class="section-label">Get Started</div>
+        <h2>Installation</h2>
+        <div class="install-grid">
+          <div class="install-card">
+            <div class="install-card-header">
+              package
+              <span class="tag">required</span>
+            </div>
+            <pre><span class="prompt">$</span> npm install <span class="acc">@jsuyog2/sequelize-ai</span>
+<span class="prompt">$</span> npm install sequelize pg pg-hstore</pre>
+          </div>
+          <div class="install-card">
+            <div class="install-card-header">
+              provider sdk
+              <span class="tag">pick one</span>
+            </div>
+            <pre><span class="prompt">$</span> npm install openai                  <span class="cm"># OpenAI</span>
+<span class="prompt">$</span> npm install @google/generative-ai   <span class="cm"># Gemini</span>
+<span class="prompt">$</span> npm install @anthropic-ai/sdk       <span class="cm"># Claude</span>
+<span class="prompt">$</span> npm install groq-sdk                <span class="cm"># Groq</span></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Providers ── -->
+    <div class="wrap" id="providers">
+      <section>
+        <div class="section-label">LLM Providers</div>
+        <h2>Supported <span>providers</span></h2>
+        <table class="providers-table">
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Argument</th>
+              <th>Default Model</th>
+              <th>Install</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>OpenAI</td>
+              <td><span class="pill">"openai"</span></td>
+              <td><span class="model-pill">gpt-4o-mini</span></td>
+              <td><code>npm install openai</code></td>
+            </tr>
+            <tr>
+              <td>Google Gemini</td>
+              <td><span class="pill">"gemini"</span></td>
+              <td><span class="model-pill">gemini-2.0-flash</span></td>
+              <td><code>npm install @google/generative-ai</code></td>
+            </tr>
+            <tr>
+              <td>Anthropic Claude</td>
+              <td><span class="pill">"claude"</span></td>
+              <td><span class="model-pill">claude-haiku-4-5-20251001</span></td>
+              <td><code>npm install @anthropic-ai/sdk</code></td>
+            </tr>
+            <tr>
+              <td>Groq</td>
+              <td><span class="pill">"groq"</span></td>
+              <td><span class="model-pill">llama-3.1-8b-instant</span></td>
+              <td><code>npm install groq-sdk</code></td>
+            </tr>
+            <tr>
+              <td>DeepSeek</td>
+              <td><span class="pill">"deepseek"</span></td>
+              <td><span class="model-pill">deepseek-chat</span></td>
+              <td><code>npm install openai</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── AI Hints ── -->
+    <div class="wrap" id="hints">
+      <section>
+        <div class="section-label">v1.1.0 Feature</div>
+        <h2>AI Column <span>Hints</span></h2>
+        <p
+          style="
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+            max-width: 580px;
+          "
+        >
+          Add <code>aiDescription</code> to your Sequelize model columns to give
+          the LLM richer context. This leads to more accurate queries,
+          especially for computed columns and ambiguous field names. It is never
+          written to your database.
+        </p>
+        <div class="hints-split">
+          <div class="hint-box">
+            <div class="hint-box-header">
+              <span>Without aiDescription</span>
+              <span class="badge-before">less accurate</span>
+            </div>
+            <pre><span class="kw">const</span> Product = sequelize.<span class="fn">define</span>(<span class="str">"Product"</span>, {
+  name:     { <span class="kw">type</span>: DataTypes.STRING },
+  price:    { <span class="kw">type</span>: DataTypes.DECIMAL },
+  category: { <span class="kw">type</span>: DataTypes.STRING },
+  stock:    { <span class="kw">type</span>: DataTypes.INTEGER },
+});
+
+<span class="cm">// LLM sees:
+// name:STRING
+// price:DECIMAL
+// stock:INTEGER</span></pre>
+          </div>
+          <div class="hint-box">
+            <div class="hint-box-header">
+              <span>With aiDescription</span>
+              <span class="badge-after">more accurate</span>
+            </div>
+            <pre><span class="kw">const</span> Product = sequelize.<span class="fn">define</span>(<span class="str">"Product"</span>, {
+  price: {
+    <span class="kw">type</span>: DataTypes.DECIMAL,
+    aiDescription: <span class="str">"Selling price in USD,
+      use for price queries"</span>,
+  },
+  stock: {
+    <span class="kw">type</span>: DataTypes.INTEGER,
+    aiDescription: <span class="str">"Units in inventory,
+      use for stock checks"</span>,
+  },
+});
+<span class="cm">// LLM sees full descriptions ✓</span></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Methods ── -->
+    <div class="wrap" id="methods">
+      <section>
+        <div class="section-label">API</div>
+        <h2>Allowed <span>methods</span></h2>
+        <div class="methods-grid">
+          <div class="method-card">
+            <div class="method-name">findAll</div>
+            <div class="method-desc">
+              Fetch multiple rows with filtering, sorting, and pagination
+            </div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">findOne</div>
+            <div class="method-desc">
+              Fetch the first row matching the condition
+            </div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">findByPk</div>
+            <div class="method-desc">Fetch a single row by primary key</div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">findAndCountAll</div>
+            <div class="method-desc">
+              Fetch rows and total count in one call
+            </div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">count</div>
+            <div class="method-desc">
+              Count rows, supports distinct counting
+            </div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">sum</div>
+            <div class="method-desc">
+              Sum a numeric column with optional filter
+            </div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">min</div>
+            <div class="method-desc">Minimum value of a numeric column</div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">max</div>
+            <div class="method-desc">Maximum value of a numeric column</div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">average</div>
+            <div class="method-desc">Average value of a numeric column</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Operators ── -->
+    <div class="wrap">
+      <section>
+        <div class="section-label">Filtering</div>
+        <h2>Where <span>operators</span></h2>
+        <div class="ops-grid">
+          <div class="op-card">
+            <span class="op-key">"gt"</span
+            ><span class="op-val">greater than</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"gte"</span
+            ><span class="op-val">≥ or equal</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"lt"</span
+            ><span class="op-val">less than</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"lte"</span
+            ><span class="op-val">≤ or equal</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"ne"</span
+            ><span class="op-val">not equal</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"eq"</span><span class="op-val">equal</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"like"</span
+            ><span class="op-val">SQL LIKE</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"in"</span><span class="op-val">in list</span>
+          </div>
+          <div class="op-card">
+            <span class="op-key">"between"</span
+            ><span class="op-val">range</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Security ── -->
+    <div class="wrap" id="security">
+      <section>
+        <div class="section-label">Security</div>
+        <h2>Built-in <span>protection</span></h2>
+        <div class="security-grid">
+          <div class="sec-card">
+            <h4>Isolated Sandbox</h4>
+            <p>
+              All LLM-generated code runs inside <code>isolated-vm</code> — a
+              separate V8 context with zero access to your Node.js environment.
+            </p>
+          </div>
+          <div class="sec-card">
+            <h4>Method Whitelist</h4>
+            <p>Only read-only methods are allowed. Blocked methods:</p>
+            <div style="margin-top: 8px">
+              <span class="blocked">destroy</span>
+              <span class="blocked">update</span>
+              <span class="blocked">create</span>
+              <span class="blocked">drop</span>
+              <span class="blocked">truncate</span>
+            </div>
+          </div>
+          <div class="sec-card">
+            <h4>Execution Timeout</h4>
+            <p>
+              Queries are automatically killed after <strong>2 seconds</strong>.
+              Infinite loops and hanging queries cannot block your process.
+            </p>
+          </div>
+          <div class="sec-card">
+            <h4>Memory Limit</h4>
+            <p>
+              The isolate is capped at <strong>128MB</strong>. Memory exhaustion
+              attacks are prevented at the sandbox level.
+            </p>
+          </div>
+          <div class="sec-card">
+            <h4>No Raw SQL</h4>
+            <p>
+              All queries go through Sequelize's model layer. Raw database
+              access and SQL injection are structurally impossible.
+            </p>
+          </div>
+          <div class="sec-card">
+            <h4>Op Translation</h4>
+            <p>
+              Operator strings like <code>"gt"</code> are translated to
+              <code>Op.gt</code> on the host side — never inside the sandbox.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Query Examples ── -->
+    <div class="wrap" id="queries">
+      <section>
+        <div class="section-label">Examples</div>
+        <h2>Supported <span>query types</span></h2>
+        <div class="queries-grid">
+          <div class="query-group">
+            <div class="query-group-header">Basic</div>
+            <div class="query-list">
+              <div class="query-item">get all products</div>
+              <div class="query-item">find product with id 5</div>
+              <div class="query-item">
+                get only name and price of all products
+              </div>
+              <div class="query-item">get top 10 most expensive products</div>
+              <div class="query-item">get products page 2 with 5 per page</div>
+            </div>
+          </div>
+          <div class="query-group">
+            <div class="query-group-header">Filtering</div>
+            <div class="query-list">
+              <div class="query-item">
+                products where stock is greater than 10
+              </div>
+              <div class="query-item">products where price is less than 50</div>
+              <div class="query-item">
+                products where category is Electronics
+              </div>
+              <div class="query-item">
+                products where stock is between 5 and 20
+              </div>
+            </div>
+          </div>
+          <div class="query-group">
+            <div class="query-group-header">Aggregates</div>
+            <div class="query-list">
+              <div class="query-item">how many products are there</div>
+              <div class="query-item">count distinct categories</div>
+              <div class="query-item">total stock of all products</div>
+              <div class="query-item">cheapest and most expensive price</div>
+              <div class="query-item">average price of all products</div>
+            </div>
+          </div>
+          <div class="query-group">
+            <div class="query-group-header">Computed Columns</div>
+            <div class="query-list">
+              <div class="query-item">show name, stock, price and earnings</div>
+              <div class="query-item">products with 10% discounted price</div>
+              <div class="query-item">products with 18% tax included</div>
+            </div>
+          </div>
+          <div class="query-group">
+            <div class="query-group-header">Multi-Query</div>
+            <div class="query-list">
+              <div class="query-item">cheapest and most expensive price</div>
+              <div class="query-item">total count and total stock</div>
+              <div class="query-item">total stock and total earnings</div>
+            </div>
+          </div>
+          <div class="query-group">
+            <div class="query-group-header">Sorting</div>
+            <div class="query-list">
+              <div class="query-item">products ordered by price ascending</div>
+              <div class="query-item">products ordered by price descending</div>
+              <div class="query-item">products ordered by stock descending</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── Footer ── -->
+    <div class="wrap">
+      <footer>
+        <div class="footer-inner">
+          <div class="footer-left">
+            Built by <a href="https://github.com/jsuyog2">Suyog Jadhav</a> · MIT
+            License · v1.1.0
+          </div>
+          <div class="footer-links">
+            <a href="https://www.npmjs.com/package/@jsuyog2/sequelize-ai">npm</a>
+            <a href="https://github.com/jsuyog2/sequelize-ai">GitHub</a>
+            <a href="https://github.com/jsuyog2/sequelize-ai/issues">Issues</a>
+            <a
+              href="https://github.com/jsuyog2/sequelize-ai/blob/main/CHANGELOG.md"
+              >Changelog</a
+            >
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
