@@ -30,54 +30,55 @@ async function build() {
     platform: "node",
     format: "cjs",
     bundle: false,
+    minify: true,
     sourcemap: false, // no sourcemaps — defeats obfuscation
     logLevel: "silent",
   });
 
-  // Step 2 — obfuscate every output file
-  function obfuscateDir(dir) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const fullPath = path.join(dir, entry.name);
+  // // Step 2 — obfuscate every output file
+  // function obfuscateDir(dir) {
+  //   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+  //     const fullPath = path.join(dir, entry.name);
 
-      if (entry.isDirectory()) {
-        obfuscateDir(fullPath);
-      } else if (entry.name.endsWith(".js")) {
-        const src = fs.readFileSync(fullPath, "utf8");
+  //     if (entry.isDirectory()) {
+  //       obfuscateDir(fullPath);
+  //     } else if (entry.name.endsWith(".js")) {
+  //       const src = fs.readFileSync(fullPath, "utf8");
 
-        const obfuscated = JavaScriptObfuscator.obfuscate(src, {
-          compact: true,
-          controlFlowFlattening: true, // scrambles logic flow
-          controlFlowFlatteningThreshold: 0.5,
-          deadCodeInjection: true, // injects fake code
-          deadCodeInjectionThreshold: 0.2,
-          debugProtection: false, // skip — breaks Node.js
-          disableConsoleOutput: false, // keep console.log working
-          identifierNamesGenerator: "hexadecimal", // _0x1a2b3c style
-          renameGlobals: false, // don't rename requires
-          rotateStringArray: true,
-          selfDefending: false, // skip — breaks Node.js
-          shuffleStringArray: true,
-          splitStrings: true, // splits "hello" → "hel"+"lo"
-          splitStringsChunkLength: 5,
-          stringArray: true, // moves strings to array
-          stringArrayCallsTransform: true,
-          stringArrayEncoding: ["base64"],
-          stringArrayIndexShift: true,
-          stringArrayRotate: true,
-          stringArrayShuffle: true,
-          stringArrayWrappersCount: 2,
-          stringArrayThreshold: 0.75,
-          unicodeEscapeSequence: false,
-          target: "node",
-        });
+  //       const obfuscated = JavaScriptObfuscator.obfuscate(src, {
+  //         compact: true,
+  //         controlFlowFlattening: true, // scrambles logic flow
+  //         controlFlowFlatteningThreshold: 0.5,
+  //         deadCodeInjection: true, // injects fake code
+  //         deadCodeInjectionThreshold: 0.2,
+  //         debugProtection: false, // skip — breaks Node.js
+  //         disableConsoleOutput: false, // keep console.log working
+  //         identifierNamesGenerator: "hexadecimal", // _0x1a2b3c style
+  //         renameGlobals: false, // don't rename requires
+  //         rotateStringArray: true,
+  //         selfDefending: false, // skip — breaks Node.js
+  //         shuffleStringArray: true,
+  //         splitStrings: true, // splits "hello" → "hel"+"lo"
+  //         splitStringsChunkLength: 5,
+  //         stringArray: true, // moves strings to array
+  //         stringArrayCallsTransform: true,
+  //         stringArrayEncoding: ["base64"],
+  //         stringArrayIndexShift: true,
+  //         stringArrayRotate: true,
+  //         stringArrayShuffle: true,
+  //         stringArrayWrappersCount: 2,
+  //         stringArrayThreshold: 0.75,
+  //         unicodeEscapeSequence: false,
+  //         target: "node",
+  //       });
 
-        fs.writeFileSync(fullPath, obfuscated.getObfuscatedCode(), "utf8");
-        console.log(`  ✓ ${path.relative(__dirname, fullPath)}`);
-      }
-    }
-  }
+  //       fs.writeFileSync(fullPath, obfuscated.getObfuscatedCode(), "utf8");
+  //       console.log(`  ✓ ${path.relative(__dirname, fullPath)}`);
+  //     }
+  //   }
+  // }
 
-  obfuscateDir("./dist");
+  // obfuscateDir("./dist");
   console.log("\n✅ Build complete → dist/");
 }
 
