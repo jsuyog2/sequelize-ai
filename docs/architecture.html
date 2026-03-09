@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introduction | Sequelize AI</title>
+    <title>Architecture & Security | Sequelize AI</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -55,9 +55,9 @@
           <span class="font-bold text-lg text-slate-900">Sequelize AI</span>
         </div>
         <nav class="p-4 flex-1 overflow-y-auto space-y-1">
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
-          <a href="architecture.html" class="nav-link"
+          <a href="architecture.html" class="nav-link active"
             >Architecture & Security</a
           >
           <a href="examples.html" class="nav-link">Examples</a>
@@ -114,9 +114,9 @@
           id="mobile-nav"
           class="md:hidden hidden bg-white border-b border-slate-200 p-4 space-y-2 relative z-0"
         >
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
-          <a href="architecture.html" class="nav-link">Architecture</a>
+          <a href="architecture.html" class="nav-link active">Architecture</a>
           <a href="examples.html" class="nav-link">Examples</a>
           <a href="api.html" class="nav-link">API Reference</a>
         </nav>
@@ -125,52 +125,95 @@
           <div
             class="prose prose-slate prose-blue max-w-none prose-headings:font-semibold prose-a:font-medium"
           >
-            <h1>Sequelize AI</h1>
-            <p class="lead text-xl text-slate-600 mb-8">
-              Query your database in plain English safely.
-            </p>
+            <h1>Security First</h1>
 
             <p>
-              <code>sequelize-ai</code> is a library that translates natural
-              language queries into secure <code>Sequelize</code> code that is
-              executed inside an isolated V8 sandbox directly returning JSON.
+              When giving AI the ability to query a database, the biggest fear
+              is <strong>accidental deletion</strong> or
+              <strong>SQL injection</strong>.
             </p>
 
-            <h2>Why use it?</h2>
+            <h2>1. ORM Wrapper vs Raw SQL</h2>
+            <p>
+              Unlike other platforms that generate raw SQL queries (which can
+              inject drop table commands), <code>sequelize-ai</code> forces the
+              LLM to output JavaScript that uses your existing Sequelize models.
+            </p>
+
+            <h2>2. The Isolated VM</h2>
+            <p>
+              We use
+              <a href="https://github.com/laverdet/isolated-vm">isolated-vm</a>
+              to execute the LLM's generated JavaScript. The sandbox has:
+            </p>
             <ul>
               <li>
-                <strong>No SQL Injection</strong>: Bypasses the danger of
-                generative text-to-SQL by forcing all queries through your ORM.
+                <strong>Zero access</strong> to Node's <code>fs</code>,
+                <code>net</code>, or <code>process.env</code>.
               </li>
               <li>
-                <strong>Read-only Sandbox</strong>: Prevents accidental
-                <code>update</code>, <code>destroy</code>, or
-                <code>drop</code> commands. CPU and Memory limits are enforced
-                per-execution.
+                <strong>Hard CPU Timeouts</strong> (killed after 2000ms by
+                default to prevent spin-loops).
               </li>
               <li>
-                <strong>Multiple Providers</strong>: Out-of-the-box support for
-                OpenAI, Gemini, Claude, Groq, and DeepSeek.
-              </li>
-              <li>
-                <strong>Complex Querying</strong>: Supports cross-table JOINS
-                via associations, math computations, multi-query aggregation,
-                and exact schema awareness.
+                <strong>Memory Execution Limits</strong> (128MB max heap).
               </li>
             </ul>
 
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-              <h3 class="text-blue-900 mt-0">Ready to build?</h3>
-              <p class="text-blue-800 mb-4">
-                Head over to the Getting Started guide to install and configure
-                your first AI integration.
-              </p>
-              <a
-                href="getting-started.html"
-                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >Get Started &rarr;</a
+            <h2>3. The Method Whitelist</h2>
+            <p>
+              The code the LLM writes attempts to call a global
+              <code>dbQuery</code> function. This function intercepts the
+              request and verifies the method name!
+            </p>
+            <div
+              class="not-prose grid sm:grid-cols-2 md:grid-cols-3 gap-4 my-6"
+            >
+              <div
+                class="bg-green-50 border border-green-200 text-green-900 rounded p-4"
               >
+                ✅ findAll
+              </div>
+              <div
+                class="bg-green-50 border border-green-200 text-green-900 rounded p-4"
+              >
+                ✅ findOne
+              </div>
+              <div
+                class="bg-green-50 border border-green-200 text-green-900 rounded p-4"
+              >
+                ✅ count
+              </div>
+              <div
+                class="bg-green-50 border border-green-200 text-green-900 rounded p-4"
+              >
+                ✅ sum/min/max
+              </div>
+              <div
+                class="bg-red-50 border border-red-200 text-red-900 rounded p-4"
+              >
+                ❌ destroy
+              </div>
+              <div
+                class="bg-red-50 border border-red-200 text-red-900 rounded p-4"
+              >
+                ❌ update
+              </div>
+              <div
+                class="bg-red-50 border border-red-200 text-red-900 rounded p-4"
+              >
+                ❌ create
+              </div>
+              <div
+                class="bg-red-50 border border-red-200 text-red-900 rounded p-4"
+              >
+                ❌ rawQuery
+              </div>
             </div>
+            <p>
+              Any attempt to modify data results in a rejected Promise and a
+              secure log failure.
+            </p>
           </div>
         </div>
       </main>

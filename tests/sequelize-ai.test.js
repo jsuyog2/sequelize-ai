@@ -2,16 +2,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // ── Imports ───────────────────────────────────────────────────────────────────
 
-import getSchemaContext from "../src/getSchemaContext.js";
-import getSystemPrompt from "../src/getSystemPrompt.js";
-import secureExecute from "../src/secureExecute.js";
+import getSchemaContext from "../src/utils/getSchemaContext.js";
+import getSystemPrompt from "../src/utils/getSystemPrompt.js";
+import secureExecute from "../src/core/secureExecute.js";
 import SequelizeAI from "../src/index.js";
-import OpenAIProvider from "../src/providers/openai.provider.js";
-import GeminiProvider from "../src/providers/gemini.provider.js";
-import ClaudeProvider from "../src/providers/claude.provider.js";
-import GroqProvider from "../src/providers/groq.provider.js";
-import translateOps from "../src/translateOps.js";
-import validateGeneratedCode from "../src/validateGeneratedCode.js";
+import OpenAIProvider from "../src/services/providers/openai.provider.js";
+import GeminiProvider from "../src/services/providers/gemini.provider.js";
+import ClaudeProvider from "../src/services/providers/claude.provider.js";
+import GroqProvider from "../src/services/providers/groq.provider.js";
+import translateOps from "../src/utils/translateOps.js";
+import validateGeneratedCode from "../src/core/validateGeneratedCode.js";
 
 // ── Sequelize mock factory ────────────────────────────────────────────────────
 

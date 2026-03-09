@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introduction | Sequelize AI</title>
+    <title>API Reference | Sequelize AI</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -55,13 +55,13 @@
           <span class="font-bold text-lg text-slate-900">Sequelize AI</span>
         </div>
         <nav class="p-4 flex-1 overflow-y-auto space-y-1">
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
           <a href="architecture.html" class="nav-link"
             >Architecture & Security</a
           >
           <a href="examples.html" class="nav-link">Examples</a>
-          <a href="api.html" class="nav-link">API Reference</a>
+          <a href="api.html" class="nav-link active">API Reference</a>
         </nav>
         <div class="p-4 border-t border-slate-200">
           <a
@@ -114,63 +114,86 @@
           id="mobile-nav"
           class="md:hidden hidden bg-white border-b border-slate-200 p-4 space-y-2 relative z-0"
         >
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
           <a href="architecture.html" class="nav-link">Architecture</a>
           <a href="examples.html" class="nav-link">Examples</a>
-          <a href="api.html" class="nav-link">API Reference</a>
+          <a href="api.html" class="nav-link active">API Reference</a>
         </nav>
 
         <div class="max-w-4xl mx-auto p-6 md:p-12 lg:p-16 w-full">
           <div
             class="prose prose-slate prose-blue max-w-none prose-headings:font-semibold prose-a:font-medium"
           >
-            <h1>Sequelize AI</h1>
-            <p class="lead text-xl text-slate-600 mb-8">
-              Query your database in plain English safely.
-            </p>
+            <h1>API Reference</h1>
 
-            <p>
-              <code>sequelize-ai</code> is a library that translates natural
-              language queries into secure <code>Sequelize</code> code that is
-              executed inside an isolated V8 sandbox directly returning JSON.
-            </p>
+            <p>The core configuration object for <code>SequelizeAI</code>.</p>
 
-            <h2>Why use it?</h2>
-            <ul>
-              <li>
-                <strong>No SQL Injection</strong>: Bypasses the danger of
-                generative text-to-SQL by forcing all queries through your ORM.
-              </li>
-              <li>
-                <strong>Read-only Sandbox</strong>: Prevents accidental
-                <code>update</code>, <code>destroy</code>, or
-                <code>drop</code> commands. CPU and Memory limits are enforced
-                per-execution.
-              </li>
-              <li>
-                <strong>Multiple Providers</strong>: Out-of-the-box support for
-                OpenAI, Gemini, Claude, Groq, and DeepSeek.
-              </li>
-              <li>
-                <strong>Complex Querying</strong>: Supports cross-table JOINS
-                via associations, math computations, multi-query aggregation,
-                and exact schema awareness.
-              </li>
-            </ul>
+            <pre><code class="language-javascript">new SequelizeAI(sequelizeInstance, options)</code></pre>
 
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-              <h3 class="text-blue-900 mt-0">Ready to build?</h3>
-              <p class="text-blue-800 mb-4">
-                Head over to the Getting Started guide to install and configure
-                your first AI integration.
-              </p>
-              <a
-                href="getting-started.html"
-                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >Get Started &rarr;</a
-              >
+            <h2>Options Parameter</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b-2 border-slate-300">
+                    <th class="p-3">Property</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Default</th>
+                    <th class="p-3">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-slate-200 bg-white">
+                    <td class="p-3 font-mono text-blue-600">provider</td>
+                    <td class="p-3"><code>string</code></td>
+                    <td class="p-3"><code>"openai"</code></td>
+                    <td class="p-3 text-sm">
+                      LLM Engine. Choose from <code>openai</code>,
+                      <code>gemini</code>, <code>claude</code>,
+                      <code>groq</code>, <code>deepseek</code>,
+                      <code>openrouter</code>, <code>together</code>
+                    </td>
+                  </tr>
+                  <tr class="border-b border-slate-200 bg-slate-50">
+                    <td class="p-3 font-mono text-blue-600">apiKey</td>
+                    <td class="p-3"><code>string</code></td>
+                    <td class="p-3"><em>Required</em></td>
+                    <td class="p-3 text-sm">
+                      The private API key for the chosen provider.
+                    </td>
+                  </tr>
+                  <tr class="border-b border-slate-200 bg-white">
+                    <td class="p-3 font-mono text-blue-600">model</td>
+                    <td class="p-3"><code>string</code></td>
+                    <td class="p-3"><em>Smart Default</em></td>
+                    <td class="p-3 text-sm">
+                      Optionally override the model (e.g.,
+                      <code>gpt-4o</code> instead of the default
+                      <code>gpt-4o-mini</code>)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
+            <h2 class="mt-8">Instance Methods</h2>
+
+            <h3>
+              <code class="text-blue-600"
+                >ask(prompt: string): Promise&lt;any&gt;</code
+              >
+            </h3>
+            <p>
+              Compiles your schema, generates code via the LLM provider, safely
+              evaluates it, and returns the query JSON result.
+            </p>
+            <p><strong>Returns Signature:</strong></p>
+            <pre><code class="language-typescript">type Result = {
+  model: string;
+  method: "findAll" | "findOne" | "count" | "sum" | "min" | "max" | "average";
+  data: any; // Raw db rows/value
+} | Result[] // If multiple disjoint queries are spawned
+</code></pre>
           </div>
         </div>
       </main>

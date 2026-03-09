@@ -1,0 +1,25 @@
+/* Tailwind directives */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-slate-50 text-slate-800 antialiased selection:bg-blue-200;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply block rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900;
+  }
+  .nav-link-active {
+    @apply bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800;
+  }
+  .prose-custom {
+    @apply prose prose-slate max-w-none prose-headings:font-semibold prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-pre:bg-slate-800 prose-pre:text-slate-100;
+  }
+}

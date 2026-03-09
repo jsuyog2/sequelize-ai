@@ -39,7 +39,20 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run build && npm test"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "prepare": "husky",
+    "prepublishOnly": "npm run build && npm test && npm run lint"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,html}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
@@ -52,7 +65,13 @@
     "@vitest/coverage-v8": "^4.0.18",
     "dotenv": "^17.3.1",
     "esbuild": "^0.27.3",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2",
     "pg": "^8.20.0",
+    "prettier": "^3.8.1",
     "vitest": "^4.0.18"
   },
   "peerDependencies": {

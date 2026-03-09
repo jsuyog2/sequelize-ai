@@ -1,3 +1,10 @@
+/**
+ * Extracts and formats schema information from a Sequelize instance
+ * to be used as context for the AI prompt.
+ *
+ * @param {import('sequelize').Sequelize} sequelize - The initialized Sequelize database instance
+ * @returns {string} Formatted textual representation of the database schema
+ */
 function getSchemaContext(sequelize) {
   const lines = [];
 
@@ -20,10 +27,11 @@ function getSchemaContext(sequelize) {
 
     // Associations
     const assocs = Object.entries(model.associations || {}).map(
-      ([, assoc]) => `  ${assoc.associationType} → ${assoc.target.name}`,
+      ([alias, assoc]) =>
+        `  ${assoc.associationType} → ${assoc.target.name} (as: "${alias}")`,
     );
 
-    lines.push(`Model: ${modelName}`);
+    lines.push(`Model: ${modelName} (Table: "${model.tableName}")`);
     lines.push("Fields:");
     lines.push(...fields);
     if (assocs.length) {

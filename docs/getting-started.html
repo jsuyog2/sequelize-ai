@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introduction | Sequelize AI</title>
+    <title>Getting Started | Sequelize AI</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -55,8 +55,10 @@
           <span class="font-bold text-lg text-slate-900">Sequelize AI</span>
         </div>
         <nav class="p-4 flex-1 overflow-y-auto space-y-1">
-          <a href="index.html" class="nav-link active">Introduction</a>
-          <a href="getting-started.html" class="nav-link">Getting Started</a>
+          <a href="index.html" class="nav-link">Introduction</a>
+          <a href="getting-started.html" class="nav-link active"
+            >Getting Started</a
+          >
           <a href="architecture.html" class="nav-link"
             >Architecture & Security</a
           >
@@ -114,8 +116,10 @@
           id="mobile-nav"
           class="md:hidden hidden bg-white border-b border-slate-200 p-4 space-y-2 relative z-0"
         >
-          <a href="index.html" class="nav-link active">Introduction</a>
-          <a href="getting-started.html" class="nav-link">Getting Started</a>
+          <a href="index.html" class="nav-link">Introduction</a>
+          <a href="getting-started.html" class="nav-link active"
+            >Getting Started</a
+          >
           <a href="architecture.html" class="nav-link">Architecture</a>
           <a href="examples.html" class="nav-link">Examples</a>
           <a href="api.html" class="nav-link">API Reference</a>
@@ -125,52 +129,58 @@
           <div
             class="prose prose-slate prose-blue max-w-none prose-headings:font-semibold prose-a:font-medium"
           >
-            <h1>Sequelize AI</h1>
-            <p class="lead text-xl text-slate-600 mb-8">
-              Query your database in plain English safely.
-            </p>
+            <h1>Getting Started</h1>
 
+            <h2>Installation</h2>
+            <pre><code>npm install @jsuyog2/sequelize-ai sequelize pg pg-hstore</code></pre>
+            <p>Additionally, install the SDK for your preferred AI provider:</p>
+            <pre><code>npm install openai                   # For OpenAI & DeepSeek
+npm install @google/generative-ai    # For Gemini
+npm install @anthropic-ai/sdk        # For Claude
+npm install groq-sdk                 # For Groq</code></pre>
+
+            <h2>Basic Setup</h2>
+            <pre><code class="language-javascript">const { Sequelize } = require("sequelize");
+const SequelizeAI = require("@jsuyog2/sequelize-ai");
+
+// 1. Setup Database
+const sequelize = new Sequelize("postgres://user:pass@localhost:5432/db");
+
+// 2. Define Models
+const Product = sequelize.define("Product", {
+  name: { type: DataTypes.STRING },
+  price: { type: DataTypes.DECIMAL(10, 2) },
+  stock: { type: DataTypes.INTEGER }
+});
+
+// 3. Initialize AI
+const ai = new SequelizeAI(sequelize, {
+  provider: "openai", // or gemini, claude, groq
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// 4. Query
+async function run() {
+  const result = await ai.ask("show me the cheapest 5 products with stock over 10");
+  console.log(result);
+  
+  // Output:
+  // {
+  //   model: "Product",
+  //   method: "findAll",
+  //   data: [ { name: "Pen", price: "1.00", stock: 15 }, ... ]
+  // }
+}</code></pre>
+
+            <h2>AI Column Hints</h2>
             <p>
-              <code>sequelize-ai</code> is a library that translates natural
-              language queries into secure <code>Sequelize</code> code that is
-              executed inside an isolated V8 sandbox directly returning JSON.
+              Give the AI better context by adding an
+              <code>aiDescription</code> to your models:
             </p>
-
-            <h2>Why use it?</h2>
-            <ul>
-              <li>
-                <strong>No SQL Injection</strong>: Bypasses the danger of
-                generative text-to-SQL by forcing all queries through your ORM.
-              </li>
-              <li>
-                <strong>Read-only Sandbox</strong>: Prevents accidental
-                <code>update</code>, <code>destroy</code>, or
-                <code>drop</code> commands. CPU and Memory limits are enforced
-                per-execution.
-              </li>
-              <li>
-                <strong>Multiple Providers</strong>: Out-of-the-box support for
-                OpenAI, Gemini, Claude, Groq, and DeepSeek.
-              </li>
-              <li>
-                <strong>Complex Querying</strong>: Supports cross-table JOINS
-                via associations, math computations, multi-query aggregation,
-                and exact schema awareness.
-              </li>
-            </ul>
-
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-              <h3 class="text-blue-900 mt-0">Ready to build?</h3>
-              <p class="text-blue-800 mb-4">
-                Head over to the Getting Started guide to install and configure
-                your first AI integration.
-              </p>
-              <a
-                href="getting-started.html"
-                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >Get Started &rarr;</a
-              >
-            </div>
+            <pre><code class="language-javascript">price: {
+  type: DataTypes.DECIMAL(10, 2),
+  aiDescription: "Selling price in USD. Use this for earnings calculations."
+}</code></pre>
           </div>
         </div>
       </main>

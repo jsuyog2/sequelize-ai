@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introduction | Sequelize AI</title>
+    <title>Examples | Sequelize AI</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -55,12 +55,12 @@
           <span class="font-bold text-lg text-slate-900">Sequelize AI</span>
         </div>
         <nav class="p-4 flex-1 overflow-y-auto space-y-1">
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
           <a href="architecture.html" class="nav-link"
             >Architecture & Security</a
           >
-          <a href="examples.html" class="nav-link">Examples</a>
+          <a href="examples.html" class="nav-link active">Examples</a>
           <a href="api.html" class="nav-link">API Reference</a>
         </nav>
         <div class="p-4 border-t border-slate-200">
@@ -114,10 +114,10 @@
           id="mobile-nav"
           class="md:hidden hidden bg-white border-b border-slate-200 p-4 space-y-2 relative z-0"
         >
-          <a href="index.html" class="nav-link active">Introduction</a>
+          <a href="index.html" class="nav-link">Introduction</a>
           <a href="getting-started.html" class="nav-link">Getting Started</a>
           <a href="architecture.html" class="nav-link">Architecture</a>
-          <a href="examples.html" class="nav-link">Examples</a>
+          <a href="examples.html" class="nav-link active">Examples</a>
           <a href="api.html" class="nav-link">API Reference</a>
         </nav>
 
@@ -125,52 +125,34 @@
           <div
             class="prose prose-slate prose-blue max-w-none prose-headings:font-semibold prose-a:font-medium"
           >
-            <h1>Sequelize AI</h1>
-            <p class="lead text-xl text-slate-600 mb-8">
-              Query your database in plain English safely.
-            </p>
+            <h1>Capabilities & Examples</h1>
 
+            <h3>Filtering & Comparisons</h3>
+            <pre><code>// User: "get products where stock is between 5 and 20"
+await ai.ask("get products where stock is between 5 and 20");</code></pre>
+
+            <h3>Computed Columns / Math</h3>
+            <p>If you need derived data without writing raw sql:</p>
+            <pre><code>// User: "show product name and potential earnings if all stock sold"
+// AI successfully derives the math automatically:
+// SELECT "name", ("stock" * "price") AS "earnings" FROM ...
+await ai.ask("show product name and potential earnings if all stock sold");</code></pre>
+
+            <h3>Multiple Queries Independently</h3>
+            <pre><code>// User: "how many products are there, and what is the total stock?"
+const results = await ai.ask("how many products are there, and what is the total stock?");
+// results === [
+//   { method: "count", data: 15 },
+//   { method: "sum", data: 405 }
+// ]</code></pre>
+
+            <h3>Relational Associations</h3>
             <p>
-              <code>sequelize-ai</code> is a library that translates natural
-              language queries into secure <code>Sequelize</code> code that is
-              executed inside an isolated V8 sandbox directly returning JSON.
+              The schema understands table relationships mapping directly to
+              Sequelize <code>include</code> arrays.
             </p>
-
-            <h2>Why use it?</h2>
-            <ul>
-              <li>
-                <strong>No SQL Injection</strong>: Bypasses the danger of
-                generative text-to-SQL by forcing all queries through your ORM.
-              </li>
-              <li>
-                <strong>Read-only Sandbox</strong>: Prevents accidental
-                <code>update</code>, <code>destroy</code>, or
-                <code>drop</code> commands. CPU and Memory limits are enforced
-                per-execution.
-              </li>
-              <li>
-                <strong>Multiple Providers</strong>: Out-of-the-box support for
-                OpenAI, Gemini, Claude, Groq, and DeepSeek.
-              </li>
-              <li>
-                <strong>Complex Querying</strong>: Supports cross-table JOINS
-                via associations, math computations, multi-query aggregation,
-                and exact schema awareness.
-              </li>
-            </ul>
-
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-              <h3 class="text-blue-900 mt-0">Ready to build?</h3>
-              <p class="text-blue-800 mb-4">
-                Head over to the Getting Started guide to install and configure
-                your first AI integration.
-              </p>
-              <a
-                href="getting-started.html"
-                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >Get Started &rarr;</a
-              >
-            </div>
+            <pre><code>// User: "Find all log messages generated by people with the 'manager' role"
+await ai.ask("Find all log messages generated by people with the 'manager' role");</code></pre>
           </div>
         </div>
       </main>
