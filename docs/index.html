@@ -3,98 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introduction | Sequelize AI</title>
+    <title>Landing Page | Sequelize AI</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
       tailwind.config = {
+        darkMode: "class",
         theme: {
           extend: {
             fontFamily: {
               sans: ["Inter", "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
             },
           },
         },
       };
     </script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-      .nav-link {
-        display: block;
-        border-radius: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #475569;
-        transition: all 0.2s;
-      }
-      .nav-link:hover {
-        background-color: #f1f5f9;
-        color: #0f172a;
-      }
-      .nav-link.active {
-        background-color: #eff6ff;
-        color: #1d4ed8;
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      defer
+    ></script>
+    <script src="js/main.js" defer></script>
   </head>
-  <body class="bg-slate-50 text-slate-800 antialiased">
-    <div class="min-h-screen grid md:grid-cols-[250px_1fr]">
-      <!-- Sidebar -->
-      <aside
-        class="bg-white border-r border-slate-200 hidden md:flex flex-col h-screen sticky top-0"
+  <body
+    class="antialiased dark:bg-[#050510] bg-[#f8faff] dark:text-slate-100 text-slate-800 transition-colors duration-300"
+  >
+    <header
+      id="navbar"
+      class="fixed top-0 left-0 right-0 z-50 nav-blur transition-all duration-300"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"
       >
-        <div class="p-6 border-b border-slate-200 flex items-center gap-3">
-          <img src="favicon.svg" class="w-8 h-8" alt="Logo" />
-          <span class="font-bold text-lg text-slate-900">Sequelize AI</span>
-        </div>
-        <nav class="p-4 flex-1 overflow-y-auto space-y-1">
-          <a href="index.html" class="nav-link active">Introduction</a>
-          <a href="getting-started.html" class="nav-link">Getting Started</a>
-          <a href="architecture.html" class="nav-link"
-            >Architecture & Security</a
-          >
-          <a href="examples.html" class="nav-link">Examples</a>
-          <a href="api.html" class="nav-link">API Reference</a>
-        </nav>
-        <div class="p-4 border-t border-slate-200">
-          <a
-            href="https://github.com/jsuyog2/sequelize-ai"
-            target="_blank"
-            class="text-sm font-medium text-slate-500 hover:text-slate-900 flex items-center gap-2"
-          >
-            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
-              <path
-                d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"
-              ></path>
-            </svg>
-            GitHub Repository
-          </a>
-        </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="flex-1 overflow-x-hidden min-w-0 bg-slate-50">
-        <!-- Mobile Header -->
-        <header
-          class="md:hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-10 flex items-center justify-between"
-        >
-          <div class="flex items-center gap-3">
-            <img src="favicon.svg" class="w-7 h-7" alt="Logo" />
-            <span class="font-bold text-slate-900">Sequelize AI</span>
-          </div>
-          <button
-            id="mobile-menu-btn"
-            class="p-2 text-slate-500 hover:text-slate-900"
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div
+            class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform"
           >
             <svg
-              class="w-6 h-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="w-5 h-5 text-white"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+              />
+            </svg>
+          </div>
+          <span
+            class="font-bold text-base tracking-tight dark:text-white text-slate-900"
+            >Sequelize<span class="text-indigo-500">AI</span></span
+          >
+        </a>
+
+        <nav class="hidden md:flex items-center gap-1">
+          <a
+            href="index.html#features"
+            class="px-4 py-2 text-sm font-medium dark:text-slate-400 text-slate-600 hover:text-indigo-500 transition-all rounded-lg"
+            >Features</a
+          >
+          <a
+            href="index.html#about"
+            class="px-4 py-2 text-sm font-medium dark:text-slate-400 text-slate-600 hover:text-indigo-500 transition-all rounded-lg"
+            >About</a
+          >
+          <a
+            href="index.html#portfolio"
+            class="px-4 py-2 text-sm font-medium dark:text-slate-400 text-slate-600 hover:text-indigo-500 transition-all rounded-lg"
+            >Databases</a
+          >
+          <a
+            href="docs-page.html"
+            class="dark:text-slate-400 text-slate-600 hover:text-indigo-500 px-4 py-2 text-sm font-medium transition-all rounded-lg"
+            >Documentation</a
+          >
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="theme-toggle"
+            class="toggle-track bg-indigo-600 hover:bg-indigo-500 transition-colors"
+          >
+            <span
+              id="toggle-thumb"
+              class="toggle-thumb bg-white flex items-center justify-center text-[10px]"
+              >🌙</span
+            >
+          </button>
+          <a
+            href="index.html#contact"
+            class="hidden sm:flex items-center px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all shadow-lg hover:-translate-y-0.5"
+            >Contact Us</a
+          >
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden p-2 text-slate-400 hover:text-indigo-500"
+          >
+            <svg
+              class="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -104,84 +122,347 @@
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M4 6h16M4 12h16M4 18h16"
-              ></path>
+              />
             </svg>
           </button>
-        </header>
+        </div>
+      </div>
 
-        <!-- Mobile Nav Dropdown -->
-        <nav
-          id="mobile-nav"
-          class="md:hidden hidden bg-white border-b border-slate-200 p-4 space-y-2 relative z-0"
+      <div
+        id="mobile-nav"
+        class="hidden md:hidden border-t dark:border-white/5 border-black/5 dark:bg-[#05050f]/95 bg-white/95 px-6 py-4 space-y-1"
+      >
+        <a
+          href="index.html#features"
+          class="block px-4 py-2 text-sm dark:text-slate-300 text-slate-700 hover:text-indigo-500"
+          >Features</a
         >
-          <a href="index.html" class="nav-link active">Introduction</a>
-          <a href="getting-started.html" class="nav-link">Getting Started</a>
-          <a href="architecture.html" class="nav-link">Architecture</a>
-          <a href="examples.html" class="nav-link">Examples</a>
-          <a href="api.html" class="nav-link">API Reference</a>
-        </nav>
+        <a
+          href="index.html#about"
+          class="block px-4 py-2 text-sm dark:text-slate-300 text-slate-700 hover:text-indigo-500"
+          >About</a
+        >
+        <a
+          href="index.html#portfolio"
+          class="block px-4 py-2 text-sm dark:text-slate-300 text-slate-700 hover:text-indigo-500"
+          >Databases</a
+        >
+        <a
+          href="docs-page.html"
+          class="block px-4 py-2 text-sm dark:text-slate-300 text-slate-700 hover:text-indigo-500"
+          >Documentation</a
+        >
+      </div>
+    </header>
 
-        <div class="max-w-4xl mx-auto p-6 md:p-12 lg:p-16 w-full">
+    <main class="w-full min-h-screen relative overflow-hidden">
+      <!-- HERO -->
+      <section
+        id="hero"
+        class="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden hero-bg pt-20 border-b dark:border-white/5 border-slate-200"
+      >
+        <div
+          class="blob w-[600px] h-[600px] bg-indigo-500/20 top-[-10%] left-[-15%] dark:bg-indigo-500/30"
+        ></div>
+        <div
+          class="blob w-[500px] h-[500px] bg-cyan-500/20 bottom-[-5%] right-[-10%]"
+        ></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <div
-            class="prose prose-slate prose-blue max-w-none prose-headings:font-semibold prose-a:font-medium"
+            id="hero-badge"
+            class="gsap-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-semibold mb-8"
           >
-            <h1>Sequelize AI</h1>
-            <p class="lead text-xl text-slate-600 mb-8">
-              Query your database in plain English safely.
-            </p>
+            <span
+              class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"
+            ></span>
+            Production Ready Software
+          </div>
+          <h1
+            id="hero-title"
+            class="gsap-hidden text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight tracking-tight mb-6 text-slate-900 dark:text-white"
+          >
+            Query your database<br />
+            <span class="gradient-text">in plain English</span>
+          </h1>
+          <p
+            id="hero-sub"
+            class="gsap-hidden text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
+            Sequelize AI translates English into secure Sequelize ORM queries,
+            executes them safely, and returns clean JSON. Zero backend
+            refactoring required.
+          </p>
 
-            <p>
-              <code>sequelize-ai</code> is a library that translates natural
-              language queries into secure <code>Sequelize</code> code that is
-              executed inside an isolated V8 sandbox directly returning JSON.
-            </p>
+          <div
+            id="hero-ctas"
+            class="gsap-hidden flex flex-col sm:flex-row gap-4 justify-center mb-16"
+          >
+            <a
+              href="docs-page.html"
+              class="px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-xl shadow-indigo-500/30 hover:-translate-y-1 transition-all"
+              >Get Started</a
+            >
+            <a
+              href="#about"
+              class="px-8 py-3.5 rounded-xl border dark:border-white/10 border-slate-300 text-slate-700 dark:text-slate-300 font-semibold hover:-translate-y-1 transition-all hover:bg-slate-100 dark:hover:bg-white/5"
+              >Learn More</a
+            >
+          </div>
+        </div>
+      </section>
 
-            <h2>Why use it?</h2>
-            <ul>
-              <li>
-                <strong>No SQL Injection</strong>: Bypasses the danger of
-                generative text-to-SQL by forcing all queries through your ORM.
-              </li>
-              <li>
-                <strong>Read-only Sandbox</strong>: Prevents accidental
-                <code>update</code>, <code>destroy</code>, or
-                <code>drop</code> commands. CPU and Memory limits are enforced
-                per-execution.
-              </li>
-              <li>
-                <strong>Multiple Providers</strong>: Out-of-the-box support for
-                OpenAI, Gemini, Claude, Groq, and DeepSeek.
-              </li>
-              <li>
-                <strong>Complex Querying</strong>: Supports cross-table JOINS
-                via associations, math computations, multi-query aggregation,
-                and exact schema awareness.
-              </li>
-            </ul>
+      <!-- FEATURES -->
+      <section
+        id="features"
+        class="py-24 relative overflow-hidden dark:bg-transparent bg-white"
+      >
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <div
+              class="section-badge gsap-hidden text-indigo-500 font-semibold mb-2"
+            >
+              Features
+            </div>
+            <h2
+              class="section-title gsap-hidden text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-4"
+            >
+              Why Sequelize AI?
+            </h2>
+          </div>
 
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 my-8">
-              <h3 class="text-blue-900 mt-0">Ready to build?</h3>
-              <p class="text-blue-800 mb-4">
-                Head over to the Getting Started guide to install and configure
-                your first AI integration.
-              </p>
-              <a
-                href="getting-started.html"
-                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >Get Started &rarr;</a
+          <div class="grid md:grid-cols-3 gap-6">
+            <div
+              class="feature-card gsap-hidden glass-card rounded-2xl p-6 group cursor-pointer"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform text-2xl"
               >
+                🛡️
+              </div>
+              <h3 class="dark:text-white text-slate-900 font-bold mb-2">
+                No SQL Injection
+              </h3>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">
+                Forces all queries through Sequelize ORM to prevent destructive
+                raw SQL actions.
+              </p>
+            </div>
+            <div
+              class="feature-card gsap-hidden glass-card rounded-2xl p-6 group cursor-pointer"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform text-2xl"
+              >
+                📦
+              </div>
+              <h3 class="dark:text-white text-slate-900 font-bold mb-2">
+                Sandboxed V8 Engine
+              </h3>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">
+                LLM code executes inside an isolated Node.js VM with zero fs/net
+                access.
+              </p>
+            </div>
+            <div
+              class="feature-card gsap-hidden glass-card rounded-2xl p-6 group cursor-pointer"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform text-2xl"
+              >
+                ⚡
+              </div>
+              <h3 class="dark:text-white text-slate-900 font-bold mb-2">
+                Multi-provider
+              </h3>
+              <p class="text-slate-500 dark:text-slate-400 text-sm">
+                Supports OpenAI, Gemini, Claude, Groq, DeepSeek, and custom LLMs
+                instantly.
+              </p>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
 
-    <script>
-      document
-        .getElementById("mobile-menu-btn")
-        ?.addEventListener("click", () => {
-          document.getElementById("mobile-nav").classList.toggle("hidden");
-        });
-    </script>
+      <!-- ABOUT -->
+      <section
+        id="about"
+        class="py-24 border-y dark:border-white/5 border-slate-200 dark:bg-white/[0.01] bg-slate-50 relative"
+      >
+        <div class="max-w-5xl mx-auto px-6 text-center">
+          <div
+            class="section-badge gsap-hidden text-indigo-500 font-semibold mb-2"
+          >
+            About The Architecture
+          </div>
+          <h2
+            class="section-title gsap-hidden text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-8"
+          >
+            How it works safely
+          </h2>
+
+          <div class="grid md:grid-cols-3 gap-8 relative mt-12">
+            <div
+              class="hidden md:block absolute top-10 left-[20%] right-[20%] h-[2px] bg-gradient-to-r from-indigo-500 via-cyan-500 to-indigo-500 opacity-30"
+            ></div>
+            <div
+              class="step-card gsap-hidden relative z-10 bg-white dark:bg-[#0f0f1c] p-6 rounded-xl border border-slate-200 dark:border-white/10 shadow-lg"
+            >
+              <div
+                class="w-12 h-12 mx-auto rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold mb-4"
+              >
+                1
+              </div>
+              <h4 class="font-bold dark:text-white text-slate-900">
+                Natural Language
+              </h4>
+              <p class="text-xs mt-2 text-slate-500">
+                Provide a plain English string.
+              </p>
+            </div>
+            <div
+              class="step-card gsap-hidden relative z-10 bg-white dark:bg-[#0f0f1c] p-6 rounded-xl border border-slate-200 dark:border-white/10 shadow-lg"
+            >
+              <div
+                class="w-12 h-12 mx-auto rounded-full bg-cyan-500 text-white flex items-center justify-center font-bold mb-4"
+              >
+                2
+              </div>
+              <h4 class="font-bold dark:text-white text-slate-900">
+                LLM Sequelize Code
+              </h4>
+              <p class="text-xs mt-2 text-slate-500">
+                AI outputs safe ORM JS objects.
+              </p>
+            </div>
+            <div
+              class="step-card gsap-hidden relative z-10 bg-white dark:bg-[#0f0f1c] p-6 rounded-xl border border-slate-200 dark:border-white/10 shadow-lg"
+            >
+              <div
+                class="w-12 h-12 mx-auto rounded-full bg-purple-500 text-white flex items-center justify-center font-bold mb-4"
+              >
+                3
+              </div>
+              <h4 class="font-bold dark:text-white text-slate-900">
+                VM Execution
+              </h4>
+              <p class="text-xs mt-2 text-slate-500">
+                Runs code securely and returns data.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO / DATABASES -->
+      <section
+        id="portfolio"
+        class="py-24 relative overflow-hidden dark:bg-transparent bg-white"
+      >
+        <div class="max-w-5xl mx-auto px-6 text-center">
+          <div
+            class="section-badge gsap-hidden text-indigo-500 font-semibold mb-2"
+          >
+            Projects & Databases
+          </div>
+          <h2
+            class="section-title gsap-hidden text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-12"
+          >
+            Supported Everywhere
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              PostgreSQL
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              MySQL
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              SQLite
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              SQL Server
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              MariaDB
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              Snowflake
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              Oracle
+            </div>
+            <div
+              class="glass-card rounded-xl p-5 card-hover font-semibold text-slate-800 dark:text-slate-100"
+            >
+              IBM Db2
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section
+        id="contact"
+        class="py-24 border-t dark:border-white/5 border-slate-200 relative overflow-hidden"
+      >
+        <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+          <div
+            class="cta-box gsap-hidden rounded-3xl p-12 bg-indigo-600 dark:bg-indigo-600/20 shadow-2xl dark:border dark:border-indigo-500/20 text-white"
+          >
+            <h2 class="text-3xl font-bold mb-4">
+              Join the Open Source Project
+            </h2>
+            <p
+              class="text-indigo-100 dark:text-slate-300 mb-8 max-w-lg mx-auto"
+            >
+              Get in touch by submitting bugs, proposing features, or writing
+              code on our GitHub repository.
+            </p>
+            <a
+              href="https://github.com/jsuyog2/sequelize-ai"
+              target="_blank"
+              class="inline-block px-8 py-3.5 rounded-xl bg-white text-indigo-600 dark:bg-indigo-500 dark:text-white font-bold hover:scale-105 transition-transform shadow-lg"
+            >
+              Contact on GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="border-t dark:border-white/5 border-slate-200 py-12 text-slate-500 dark:text-slate-400"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-bold"
+          >
+            AI
+          </div>
+          <span class="font-bold dark:text-white text-slate-900"
+            >Sequelize<span class="text-indigo-500">AI</span></span
+          >
+        </div>
+        <div class="text-sm">MIT License © 2026 Developer</div>
+      </div>
+    </footer>
   </body>
 </html>

@@ -4,6 +4,34 @@ All notable changes to sequelize-ai will be documented in this file.
 
 ---
 
+## [1.2.0] — 2026-03-09
+
+### Added
+
+- **Animated GitHub Pages Architecture:** Rewrote the documentation site pipeline into a standalone zero-dependency `build-docs.js` script that procedurally generates a beautiful Tailwind and GSAP-animated landing page into the `docs/` folder.
+- **Dark/Light Mode:** Includes a local-storage persisted theme toggle.
+- **Fixes:** Squashed bugs regarding GSAP missing targets on documentation sub-pages, contrasted light-mode code blocks, and correctly exported SVG favicons during the build process.
+
+---
+
+## [1.1.1] — 2026-03-09
+
+### Added
+
+- **Modern Documentation Site:** A new, beautiful Tailwind CSS static documentation site populated within the `docs/` folder, deployable to GitHub Pages.
+- **JSDoc Type Safety:** Added comprehensive JSDoc annotations to `SequelizeAI` options, core execution engine, and utilities, greatly improving autocomplete and IntelliSense for developers.
+- **Improved Error Context:** The secure evaluation sandbox now traps the exact generated LLM code and appends it to execution error messages to simplify debugging AI "hallucinations".
+- **CI/CD Pipelines:** Implemented robust GitHub Actions workflows for automated testing, linting, and coverage on push (`ci.yml`) and documentation deployment (`docs.yml`).
+- **Open Source Standards:** Integrated a comprehensive `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `PULL_REQUEST_TEMPLATE.md`, and structured YAML GitHub Issue templates.
+- **Pre-commit Hooks:** Added `husky` and `lint-staged` along with `eslint` and `prettier` to enforce code quality automatically before commits.
+
+### Changed
+
+- **Project Structure Refactor:** Cleaned up project organization by extracting core logic into `src/core`, `src/utils`, and `src/services/providers`. Migrated sample models and scripts into an isolated `examples/` directory.
+- **README Overhaul:** Completely rewrote the `README.md` to highlight the project's unique security-first value proposition, feature checklists, and integration with the new documentation site.
+
+---
+
 ## [1.1.0] — 2026-03-06
 
 ### Added

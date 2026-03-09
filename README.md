@@ -48,10 +48,10 @@ It is perfect for building LLM-powered admin dashboards, conversational data ana
 npm install @jsuyog2/sequelize-ai
 ```
 
-Install the required peer dependencies:
+Install the required peer dependencies (and your specific database dialect driver, e.g. `pg`, `mysql2`, `sqlite3`):
 
 ```bash
-npm install sequelize pg pg-hstore
+npm install sequelize
 ```
 
 Install the SDK for your preferred AI provider:
