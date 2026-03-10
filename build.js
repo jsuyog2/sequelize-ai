@@ -25,16 +25,29 @@ async function build() {
   entryPoints.forEach((f) => console.log(`  • ${f}`));
   console.log();
 
-  await esbuild.build({
-    entryPoints,
-    outdir: "dist",
-    platform: "node",
-    format: "cjs",
-    bundle: false,
-    minify: true,
-    sourcemap: false,
-    logLevel: "info",
-  });
+  await Promise.all([
+    esbuild.build({
+      entryPoints,
+      outdir: "dist",
+      platform: "node",
+      format: "cjs",
+      bundle: false,
+      minify: true,
+      sourcemap: true,
+      logLevel: "info",
+    }),
+    esbuild.build({
+      entryPoints,
+      outdir: "dist",
+      platform: "node",
+      format: "esm",
+      outExtension: { ".js": ".mjs" },
+      bundle: false,
+      minify: true,
+      sourcemap: true,
+      logLevel: "info",
+    }),
+  ]);
 
   console.log("\n✅ Build complete → dist/");
 }

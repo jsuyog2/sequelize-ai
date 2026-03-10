@@ -28,7 +28,7 @@ function getSchemaContext(sequelize) {
     // Associations
     const assocs = Object.entries(model.associations || {}).map(
       ([alias, assoc]) =>
-        `  ${assoc.associationType} → ${assoc.target.name} (as: "${alias}")`,
+        `  ${assoc.associationType} → ${assoc.target.name || "Unknown"} (as: "${alias}")`,
     );
 
     lines.push(`Model: ${modelName} (Table: "${model.tableName}")`);

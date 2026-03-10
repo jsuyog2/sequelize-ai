@@ -9,9 +9,14 @@ const OP_MAP = {
   eq: Op.eq,
   like: Op.like,
   iLike: Op.iLike,
+  notLike: Op.notLike,
+  notILike: Op.notILike,
   in: Op.in,
   notIn: Op.notIn,
   between: Op.between,
+  not: Op.not,
+  or: Op.or,
+  and: Op.and,
 };
 
 /**
@@ -21,7 +26,17 @@ const OP_MAP = {
  * @param {Object|Array|null|undefined} where - The where clause object or array
  * @returns {Object|Array|null|undefined} The translated where clause containing Sequelize Op symbols
  */
-module.exports = function translateOps(where) {
+/**
+ * Recursively translates plain string operator keys (e.g., 'gt', 'like', 'or')
+ * into Sequelize Op symbols for safe sandbox evaluations.
+ *
+ * Supported operators: gt, gte, lt, lte, ne, eq, like, iLike, notLike,
+ * notILike, in, notIn, between, not, or, and
+ *
+ * @param {Object|Array|null|undefined} where - The where clause object or array
+ * @returns {Object|Array|null|undefined} The translated where clause with Sequelize Op symbols
+ */
+function translateOps(where) {
   if (!where || typeof where !== "object") return where;
 
   // Handle arrays (e.g., inside 'in' or 'notIn' operators)
@@ -57,4 +72,6 @@ module.exports = function translateOps(where) {
       return [key, val];
     }),
   );
-};
+}
+
+module.exports = translateOps;

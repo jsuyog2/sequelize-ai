@@ -57,8 +57,15 @@ Where operators — use plain strings, NOT Op.gt or [Op.gt]:
 - equal:              { field: { "eq": value } }
 - like:               { field: { "like": "%value%" } }
 - ilike:              { field: { "iLike": "%value%" } }
+- not like:           { field: { "notLike": "%value%" } }
 - in list:            { field: { "in": [v1, v2] } }
+- not in list:        { field: { "notIn": [v1, v2] } }
 - between:            { field: { "between": [min, max] } }
+- not:                { field: { "not": value } }
+
+Logical operators:
+- OR conditions:      { "or": [{ field1: val1 }, { field2: val2 }] }
+- AND conditions:     { "and": [{ field1: val1 }, { field2: val2 }] }
 
 Clauses you can use inside options:
 - where:      { field: value } or { field: { "operator": value } }

@@ -1,0 +1,12 @@
+.github/
+tests/
+examples/
+docs/
+docs-build/
+*.config.*
+build.js
+build-docs.js
+.prettierrc
+.eslintignore
+.eslintrc.json
+.editorconfig

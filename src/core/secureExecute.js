@@ -19,11 +19,15 @@ const ALLOWED_METHODS = [
  *
  * @param {import('sequelize').Sequelize} sequelize - The mapped Sequelize instance
  * @param {string} code - The generated codebase snippet to execute
+ * @param {Object} [options] - Sandbox limit options
+ * @param {number} [options.timeout=2000] - Sandbox execution timeout in ms
+ * @param {number} [options.memoryLimit=128] - Sandbox memory limit in MB
  * @returns {Promise<any>} The result of the database query operation
  * @throws {Error} If the query fails, times out, or attempts unauthorized modifications
  */
-async function secureExecute(sequelize, code) {
-  const isolate = new ivm.Isolate({ memoryLimit: 128 });
+async function secureExecute(sequelize, code, options = {}) {
+  const { timeout = 2000, memoryLimit = 128 } = options;
+  const isolate = new ivm.Isolate({ memoryLimit });
 
   try {
     const context = await isolate.createContext();
@@ -129,7 +133,7 @@ async function secureExecute(sequelize, code) {
     `);
 
     const raw = await script.run(context, {
-      timeout: 2000,
+      timeout,
       promise: true,
       copy: true,
     });

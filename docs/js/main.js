@@ -195,3 +195,84 @@ document.querySelectorAll(".feature-card, .step-card").forEach((card) => {
   });
   card.addEventListener("mouseleave", () => (card.style.transform = ""));
 });
+
+// Initialize Lucide Icons
+if (typeof lucide !== "undefined") {
+  lucide.createIcons();
+}
+
+// Code block copy buttons
+document.querySelectorAll("pre").forEach((block) => {
+  // Only add copy button if the pre contains a code block
+  if (!block.querySelector("code")) return;
+
+  block.classList.add("relative", "group");
+
+  const button = document.createElement("button");
+  button.className =
+    "absolute top-3 right-3 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 z-10";
+  button.innerHTML =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+  button.title = "Copy to clipboard";
+
+  button.addEventListener("click", async () => {
+    const text = block.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      button.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(() => {
+        button.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  });
+
+  block.appendChild(button);
+});
+
+// Search Filtering
+const searchInput = document.getElementById("doc-search");
+if (searchInput) {
+  // Listen for Ctrl+K
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+
+  searchInput.addEventListener("input", (e) => {
+    const filter = e.target.value.toLowerCase();
+    const content = document.getElementById("docs-content");
+    if (!content) return;
+
+    // Simple logic highlighting: iterate all h2s and ps, and hide unmatching paragraphs
+    // A robust search would need a separate index, but for single-page docs this acts as a filter
+    const nodes = content.querySelectorAll("h2, h3, p, pre");
+    nodes.forEach((node) => {
+      if (filter === "") {
+        node.style.display = "";
+        return;
+      }
+
+      const text = node.textContent.toLowerCase();
+      if (text.includes(filter)) {
+        node.style.display = "";
+        // Unhide the closest preceding H2 if matched a P/PRE
+        if (node.tagName !== "H2" && node.tagName !== "H3") {
+          let prev = node.previousElementSibling;
+          while (prev && prev.tagName !== "H2") {
+            if (prev.tagName === "H3") prev.style.display = "";
+            prev = prev.previousElementSibling;
+          }
+          if (prev) prev.style.display = "";
+        }
+      } else {
+        node.style.display = "none";
+      }
+    });
+  });
+}
